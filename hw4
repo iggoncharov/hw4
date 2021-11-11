@@ -24,7 +24,7 @@ class ColorizeMixin:
     задает цвет в атрибуте ĸласса repr_color_code
     """
     def __init__(self):
-        self.color = 33
+        self.color = 32
         self.style = 1
         self.Background_color = '40m'
 
