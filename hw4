@@ -10,7 +10,7 @@ class Transformation_Json:
     def __init__(self, data):
         for key, val in data.items():
             if iskeyword(key):
-                key += '_'
+                key = key + '_'
 
             if isinstance(val, dict):
                 self.__dict__[key] = Transformation_Json(val)
