@@ -25,14 +25,18 @@ class ColorizeMixin:
     """
     color = 32
     style = 1
-    Background_color = '40m'
+    background_color = '40m'
+    end = '\033[0'
+    mod = 'm'
 
     def __repr__(self):
         output = super().__repr__()
-        return f'\033[{self.style};{self.color};{self.Background_color} {output}'
+        return f'{self.end};{self.style};{self.color};{self.background_color}{output}{self.end}{self.mod}'
 
 class Base:
-    "Базовый класс для вывода"
+    """
+    Базовый класс для вывода
+    """
     def __repr__(self):
         return f'{self.title} | {self.price}'
 
@@ -42,19 +46,24 @@ class Advert(ColorizeMixin, Base, TransformationJson):
     Динамичесĸи создает атрибуты эĸземпляра ĸласса из атрибутов JSON-объеĸта
     """
     def __init__(self, data):
+        super().__init__(data)
         self.__dict__.update(TransformationJson(data).__dict__)
-
-    def __setattr__(self, key, value):
-        if key == 'price':
-            self.__dict__[key] = value
 
     @property
     def price(self):
-        if "price" in self.__dict__ and self.__dict__["price"] > 0:
-            return self.__dict__["price"]
-        elif "price" in self.__dict__ and self.__dict__["price"] < 0:
+        if "price" in self.__dict__:
+            if self.__dict__["price"] >= 0:
+                return self.__dict__["price"]
+            else:
+                raise ValueError("price must be >= 0")
+        else:
+            return 0
+
+    @price.setter
+    def price(self, val):
+        self.__dict__['price'] = val
+        if self.price < 0:
             raise ValueError("price must be >= 0")
-        return 0
 
 
 if __name__ == "__main__":
@@ -92,5 +101,4 @@ if __name__ == "__main__":
         }"""
     data_3 = Advert(json.loads(data3))
     print(data_3)
-    data_3.price = -100
-    print(data_3.price)
+    data_3.price = -900
